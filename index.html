@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCalc Pro - Guide de Calculs Médicaux</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🏥</text></svg>">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1>🏥 MediCalc Pro</h1>
+                <p>Calculs médicaux rapides</p>
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 Rechercher un outil...">
+            </div>
+            <nav class="nav-menu">
+                <div class="nav-category">📏 Mensurations</div>
+                <button class="nav-btn active" data-calc="imc">IMC & Poids Idéal</button>
+                <button class="nav-btn" data-calc="bsa">Surface Corporelle</button>
+                <button class="nav-btn" data-calc="pam">Pression Artérielle Moy.</button>
+                <button class="nav-btn" data-calc="ict">Index Cardio-Thoracique</button>
+
+                <div class="nav-category">🧠 Neurologie</div>
+                <button class="nav-btn" data-calc="glasgow">Score de Glasgow</button>
+                <button class="nav-btn" data-calc="nihss">NIHSS Simplifié</button>
+
+                <div class="nav-category">💊 Pharmacologie</div>
+                <button class="nav-btn" data-calc="doses-ped">Doses Pédiatriques</button>
+                <button class="nav-btn" data-calc="perfusion">Débit de Perfusion</button>
+
+                <div class="nav-category">🫁 Pneumologie</div>
+                <button class="nav-btn" data-calc="curb65">Score CURB-65</button>
+                <button class="nav-btn" data-calc="wells">Score de Wells (TVP)</button>
+
+                <div class="nav-category">🩺 Scores de Gravité</div>
+                <button class="nav-btn" data-calc="qsofa">Quick SOFA (Sepsis)</button>
+
+                <div class="nav-category">🔬 Rénal & Métabolique</div>
+                <button class="nav-btn" data-calc="clairance">Clairance Créatinine</button>
+                <button class="nav-btn" data-calc="trou-anionique">Trou Anionique</button>
+                <button class="nav-btn" data-calc="calcemie">Calcémie Corrigée</button>
+
+                <div class="nav-category">👶 Pédiatrie</div>
+                <button class="nav-btn" data-calc="apgar">Score d'APGAR</button>
+            </nav>
+            <div class="sidebar-footer">
+                <p>⚠️ Aide au calcul uniquement<br>Ne remplace pas le jugement clinique</p>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <button class="menu-toggle" id="menuToggle">☰ Menu</button>
+
+            <!-- IMC -->
+            <div class="calc-panel active" id="calc-imc">
+                <h2>📏 Indice de Masse Corporelle (IMC)</h2>
+                <div class="form-group">
+                    <label>Poids (kg)</label>
+                    <input type="number" id="imc-poids" placeholder="Ex: 70" step="0.1" min="1">
+                </div>
+                <div class="form-group">
+                    <label>Taille (cm)</label>
+                    <input type="number" id="imc-taille" placeholder="Ex: 170" step="0.1" min="1">
+                </div>
+                <button class="btn-calculer" onclick="calculerIMC()">Calculer l'IMC</button>
+                <div class="result-box" id="imc-result"></div>
+                <div class="result-box secondary" id="imc-poids-ideal"></div>
+            </div>
+
+            <!-- BSA -->
+            <div class="calc-panel" id="calc-bsa">
+                <h2>📏 Surface Corporelle (BSA)</h2>
+                <p class="formula-text">Formule de Mosteller : √((Taille(cm) × Poids(kg)) / 3600)</p>
+                <div class="form-group">
+                    <label>Poids (kg)</label>
+                    <input type="number" id="bsa-poids" placeholder="Ex: 70" step="0.1" min="1">
+                </div>
+                <div class="form-group">
+                    <label>Taille (cm)</label>
+                    <input type="number" id="bsa-taille" placeholder="Ex: 170" step="0.1" min="1">
+                </div>
+                <button class="btn-calculer" onclick="calculerBSA()">Calculer la Surface Corporelle</button>
+                <div class="result-box" id="bsa-result"></div>
+            </div>
+
+            <!-- PAM -->
+            <div class="calc-panel" id="calc-pam">
+                <h2>💓 Pression Artérielle Moyenne (PAM)</h2>
+                <p class="formula-text">PAM = (PAS + 2×PAD) / 3</p>
+                <div class="form-group">
+                    <label>Pression Artérielle Systolique (mmHg)</label>
+                    <input type="number" id="pam-pas" placeholder="Ex: 120">
+                </div>
+                <div class="form-group">
+                    <label>Pression Artérielle Diastolique (mmHg)</label>
+                    <input type="number" id="pam-pad" placeholder="Ex: 80">
+                </div>
+                <button class="btn-calculer" onclick="calculerPAM()">Calculer la PAM</button>
+                <div class="result-box" id="pam-result"></div>
+            </div>
+
+            <!-- ICT -->
+            <div class="calc-panel" id="calc-ict">
+                <h2>🫀 Index Cardio-Thoracique (ICT)</h2>
+                <div class="form-group">
+                    <label>Diamètre cardiaque transverse (mm)</label>
+                    <input type="number" id="ict-card" placeholder="Ex: 130" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label>Diamètre thoracique transverse (mm)</label>
+                    <input type="number" id="ict-thor" placeholder="Ex: 280" step="0.1">
+                </div>
+                <button class="btn-calculer" onclick="calculerICT()">Calculer l'ICT</button>
+                <div class="result-box" id="ict-result"></div>
+            </div>
+
+            <!-- Glasgow -->
+            <div class="calc-panel" id="calc-glasgow">
+                <h2>🧠 Score de Glasgow (GCS)</h2>
+                <div class="glasgow-grid">
+                    <div class="glasgow-col">
+                        <h3>Ouverture des Yeux (Y)</h3>
+                        <select id="gcs-yeux">
+                            <option value="">Sélectionner...</option>
+                            <option value="4">4 - Spontanée</option>
+                            <option value="3">3 - À la parole</option>
+                            <option value="2">2 - À la douleur</option>
+                            <option value="1">1 - Aucune</option>
+                        </select>
+                    </div>
+                    <div class="glasgow-col">
+                        <h3>Réponse Verbale (V)</h3>
+                        <select id="gcs-verbale">
+                            <option value="">Sélectionner...</option>
+                            <option value="5">5 - Orientée</option>
+                            <option value="4">4 - Confuse</option>
+                            <option value="3">3 - Inappropriée</option>
+                            <option value="2">2 - Incompréhensible</option>
+                            <option value="1">1 - Aucune</option>
+                        </select>
+                    </div>
+                    <div class="glasgow-col">
+                        <h3>Réponse Motrice (M)</h3>
+                        <select id="gcs-motrice">
+                            <option value="">Sélectionner...</option>
+                            <option value="6">6 - Obéit</option>
+                            <option value="5">5 - Localise douleur</option>
+                            <option value="4">4 - Retrait en flexion</option>
+                            <option value="3">3 - Flexion anormale</option>
+                            <option value="2">2 - Extension</option>
+                            <option value="1">1 - Aucune</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn-calculer" onclick="calculerGlasgow()">Calculer le GCS</button>
+                <div class="result-box" id="glasgow-result"></div>
+            </div>
+
+            <!-- NIHSS -->
+            <div class="calc-panel" id="calc-nihss">
+                <h2>🧠 NIHSS Simplifié (AVC)</h2>
+                <p class="formula-text">Évaluation rapide de la sévérité d'un AVC</p>
+                <div class="form-group">
+                    <label>Conscience (0=Normale, 1=Somnolence, 2=Stupeur, 3=Coma)</label>
+                    <input type="number" id="nihss-conscience" min="0" max="3" placeholder="0-3">
+                </div>
+                <div class="form-group">
+                    <label>Paralysie faciale (0=Absente, 1=Mineure, 2=Partielle, 3=Complète)</label>
+                    <input type="number" id="nihss-face" min="0" max="3" placeholder="0-3">
+                </div>
+                <div class="form-group">
+                    <label>Motricité bras (0=Normale, 1=Dérive, 2=Effort, 3=Pas de mvmt, 4=Absente)</label>
+                    <input type="number" id="nihss-bras" min="0" max="4" placeholder="0-4">
+                </div>
+                <div class="form-group">
+                    <label>Langage (0=Normal, 1=Aphasie légère, 2=Aphasie sévère, 3=Mutisme)</label>
+                    <input type="number" id="nihss-langage" min="0" max="3" placeholder="0-3">
+                </div>
+                <button class="btn-calculer" onclick="calculerNIHSS()">Calculer le NIHSS</button>
+                <div class="result-box" id="nihss-result"></div>
+            </div>
+
+            <!-- Doses Pédiatriques -->
+            <div class="calc-panel" id="calc-doses-ped">
+                <h2>💊 Doses Pédiatriques</h2>
+                <div class="form-group">
+                    <label>Poids de l'enfant (kg)</label>
+                    <input type="number" id="dose-poids" placeholder="Ex: 15" step="0.1" min="0.1">
+                </div>
+                <div class="form-group">
+                    <label>Médicament</label>
+                    <select id="dose-medicament" onchange="autoRemplirDose()">
+                        <option value="">Choisir un médicament...</option>
+                        <option value="paracetamol">Paracétamol (15 mg/kg/prise)</option>
+                        <option value="ibuprofene">Ibuprofène (10 mg/kg/prise)</option>
+                        <option value="amoxicilline">Amoxicilline (25 mg/kg/prise)</option>
+                        <option value="ceftriaxone">Ceftriaxone (50 mg/kg/jour)</option>
+                        <option value="salbutamol">Salbutamol inhalé (0.1 mg/kg)</option>
+                        <option value="adrenaline">Adrénaline (0.01 mg/kg)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Dose recommandée (mg/kg)</label>
+                    <input type="number" id="dose-mgkg" placeholder="Ex: 15" step="0.01" min="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Concentration du produit (mg/mL)</label>
+                    <input type="number" id="dose-concentration" placeholder="Ex: 24" step="0.01" min="0.01">
+                </div>
+                <button class="btn-calculer" onclick="calculerDosePed()">Calculer la dose</button>
+                <div class="result-box" id="dose-result"></div>
+            </div>
+
+            <!-- Perfusion -->
+            <div class="calc-panel" id="calc-perfusion">
+                <h2>💧 Débit de Perfusion</h2>
+                <div class="form-group">
+                    <label>Volume total (mL)</label>
+                    <input type="number" id="perf-volume" placeholder="Ex: 500" step="1" min="1">
+                </div>
+                <div class="form-group">
+                    <label>Durée (heures)</label>
+                    <input type="number" id="perf-heures" placeholder="Ex: 4" step="0.1" min="0.1">
+                </div>
+                <div class="form-group">
+                    <label>Facteur de gouttes (gouttes/mL)</label>
+                    <select id="perf-gouttes">
+                        <option value="20">20 (standard)</option>
+                        <option value="60">60 (micro-gouttes / pédiatrie)</option>
+                        <option value="15">15 (transfuseur)</option>
+                    </select>
+                </div>
+                <button class="btn-calculer" onclick="calculerPerfusion()">Calculer le débit</button>
+                <div class="result-box" id="perf-result"></div>
+            </div>
+
+            <!-- CURB-65 -->
+            <div class="calc-panel" id="calc-curb65">
+                <h2>🫁 Score CURB-65 (Pneumonie)</h2>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" id="curb-confusion"> Confusion</label>
+                    <label><input type="checkbox" id="curb-uree"> Urée > 7 mmol/L</label>
+                    <label><input type="checkbox" id="curb-respi"> Fréquence respiratoire ≥ 30/min</label>
+                    <label><input type="checkbox" id="curb-tas"> TAS < 90 ou TAD ≤ 60 mmHg</label>
+                    <label><input type="checkbox" id="curb-age"> Âge ≥ 65 ans</label>
+                </div>
+                <button class="btn-calculer" onclick="calculerCURB65()">Calculer le CURB-65</button>
+                <div class="result-box" id="curb65-result"></div>
+            </div>
+
+            <!-- Wells TVP -->
+            <div class="calc-panel" id="calc-wells">
+                <h2>🦵 Score de Wells (Thrombose Veineuse Profonde)</h2>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" id="wells-cancer" value="1"> Cancer actif</label>
+                    <label><input type="checkbox" id="wells-paralysie" value="1"> Paralysie/plâtre récent</label>
+                    <label><input type="checkbox" id="wells-alite" value="1"> Alitement > 3 jours ou chirurgie récente</label>
+                    <label><input type="checkbox" id="wells-douleur" value="1"> Douleur localisée (trajet veineux)</label>
+                    <label><input type="checkbox" id="wells-oedeme" value="1"> Œdème de tout le membre</label>
+                    <label><input type="checkbox" id="wells-mollet" value="1"> Œdème mollet > 3 cm (côté symptomatique)</label>
+                    <label><input type="checkbox" id="wells-collateral" value="1"> Circulation veineuse collatérale superficielle</label>
+                    <label><input type="checkbox" id="wells-alternatif" value="-2"> Diagnostic alternatif aussi probable</label>
+                </div>
+                <button class="btn-calculer" onclick="calculerWells()">Calculer le Score de Wells</button>
+                <div class="result-box" id="wells-result"></div>
+            </div>
+
+            <!-- qSOFA -->
+            <div class="calc-panel" id="calc-qsofa">
+                <h2>⚠️ Quick SOFA (Sepsis)</h2>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" id="qsofa-respi"> Fréquence respiratoire ≥ 22/min</label>
+                    <label><input type="checkbox" id="qsofa-tas"> Pression artérielle systolique ≤ 100 mmHg</label>
+                    <label><input type="checkbox" id="qsofa-conscience"> Altération de l'état de conscience (GCS < 15)</label>
+                </div>
+                <button class="btn-calculer" onclick="calculerQSOFA()">Calculer le qSOFA</button>
+                <div class="result-box" id="qsofa-result"></div>
+            </div>
+
+            <!-- Clairance Créatinine -->
+            <div class="calc-panel" id="calc-clairance">
+                <h2>🔬 Clairance de la Créatinine (Cockcroft & Gault)</h2>
+                <div class="form-group">
+                    <label>Âge (années)</label>
+                    <input type="number" id="clair-age" placeholder="Ex: 65" min="1">
+                </div>
+                <div class="form-group">
+                    <label>Poids (kg)</label>
+                    <input type="number" id="clair-poids" placeholder="Ex: 70" step="0.1" min="1">
+                </div>
+                <div class="form-group">
+                    <label>Créatinine sérique (µmol/L)</label>
+                    <input type="number" id="clair-creat" placeholder="Ex: 88" step="0.1" min="1">
+                </div>
+                <div class="form-group">
+                    <label>Sexe</label>
+                    <select id="clair-sexe">
+                        <option value="homme">Homme</option>
+                        <option value="femme">Femme</option>
+                    </select>
+                </div>
+                <button class="btn-calculer" onclick="calculerClairance()">Calculer la Clairance</button>
+                <div class="result-box" id="clair-result"></div>
+            </div>
+
+            <!-- Trou Anionique -->
+            <div class="calc-panel" id="calc-trou-anionique">
+                <h2>🔬 Trou Anionique</h2>
+                <p class="formula-text">TA = Na⁺ - (Cl⁻ + HCO₃⁻)</p>
+                <div class="form-group">
+                    <label>Sodium (Na⁺) - mmol/L</label>
+                    <input type="number" id="ta-na" placeholder="Ex: 140" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label>Chlore (Cl⁻) - mmol/L</label>
+                    <input type="number" id="ta-cl" placeholder="Ex: 100" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label>Bicarbonates (HCO₃⁻) - mmol/L</label>
+                    <input type="number" id="ta-hco3" placeholder="Ex: 24" step="0.1">
+                </div>
+                <button class="btn-calculer" onclick="calculerTrouAnionique()">Calculer le Trou Anionique</button>
+                <div class="result-box" id="ta-result"></div>
+            </div>
+
+            <!-- Calcémie Corrigée -->
+            <div class="calc-panel" id="calc-calcemie">
+                <h2>🦴 Calcémie Corrigée</h2>
+                <p class="formula-text">Calcémie corrigée = Ca mesurée + 0.025 × (40 - Albumine)</p>
+                <div class="form-group">
+                    <label>Calcémie mesurée (mmol/L)</label>
+                    <input type="number" id="calcemie-ca" placeholder="Ex: 2.10" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Albuminémie (g/L)</label>
+                    <input type="number" id="calcemie-alb" placeholder="Ex: 35" step="0.1">
+                </div>
+                <button class="btn-calculer" onclick="calculerCalcemie()">Calculer la Calcémie Corrigée</button>
+                <div class="result-box" id="calcemie-result"></div>
+            </div>
+
+            <!-- APGAR -->
+            <div class="calc-panel" id="calc-apgar">
+                <h2>👶 Score d'APGAR</h2>
+                <table class="apgar-table">
+                    <thead>
+                        <tr><th>Critère</th><th>0 point</th><th>1 point</th><th>2 points</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Fréquence cardiaque</td>
+                            <td>Absente</td><td>< 100/min</td><td>> 100/min</td>
+                        </tr>
+                        <tr>
+                            <td>Respiration</td>
+                            <td>Absente</td><td>Lente, irrégulière</td><td>Bonne, cris</td>
+                        </tr>
+                        <tr>
+                            <td>Tonus musculaire</td>
+                            <td>Hypotonie</td><td>
